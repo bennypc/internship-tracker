@@ -1,0 +1,43 @@
+{
+  "uid": "string",                 // Unique user ID (Firebase UID)
+  "email": "string",               // User's email address
+  "displayName": "string",         // User's display name
+  "photoURL": "string",            // URL to user's profile picture
+  "createdAt": "timestamp",        // Timestamp of account creation
+  "updatedAt": "timestamp",        // Timestamp of last profile update
+  "role": "string",                // User's role (e.g., student, admin)
+  "profile": {
+    "firstName": "string",         // User's first name
+    "lastName": "string",          // User's last name
+    "phoneNumber": "string",       // User's phone number
+    "bio": "string",               // Short biography
+    "linkedin": "string",          // LinkedIn profile URL
+    "website": "string"            // Personal website or portfolio URL
+  },
+  "preferences": {
+    "notifications": {
+      "email": "boolean",          // Preference for email notifications
+      "sms": "boolean"             // Preference for SMS notifications
+    },
+    "theme": "string"              // Preferred theme (e.g., light, dark)
+  },
+  "stats": {
+    "applicationsSubmitted": "number", // Number of applications submitted
+    "interviews": "number",            // Number of interviews
+    "offers": "number",                // Number of offers received
+    "rejections": "number"             // Number of rejections
+  },
+  "connections": {
+    "followers": ["uid"],          // List of user IDs who follow this user
+    "following": ["uid"]           // List of user IDs this user follows
+  },
+  "socialFeatures": {
+    "posts": ["postId"],           // List of post IDs created by the user
+    "messages": ["messageId"]      // List of message IDs
+  },
+  "settings": {
+    "privacy": {
+      "profileVisibility": "string" // Profile visibility (public, private, friends)
+    }
+  }
+}
