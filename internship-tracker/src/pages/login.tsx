@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router'; // Import useRouter from next/router
 import { auth } from '../../firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import Link from 'next/link';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -99,12 +100,12 @@ export default function Login() {
                 </div>
 
                 <div className='text-sm leading-6'>
-                  <a
+                  <Link
                     href='#'
                     className='font-semibold text-indigo-600 hover:text-indigo-500'
                   >
                     Forgot password?
-                  </a>
+                  </Link>
                 </div>
               </div>
 
@@ -134,10 +135,7 @@ export default function Login() {
               </div>
 
               <div className='mt-6 grid grid-cols-2 gap-4'>
-                <a
-                  href='#'
-                  className='flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:ring-transparent'
-                >
+                <button className='flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:ring-transparent'>
                   <svg
                     className='h-5 w-5'
                     aria-hidden='true'
@@ -163,12 +161,9 @@ export default function Login() {
                   <span className='text-sm font-semibold leading-6'>
                     Google
                   </span>
-                </a>
+                </button>
 
-                <a
-                  href='#'
-                  className='flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:ring-transparent'
-                >
+                <button className='flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:ring-transparent'>
                   <svg
                     className='h-5 w-5 fill-[#24292F]'
                     aria-hidden='true'
@@ -184,19 +179,19 @@ export default function Login() {
                   <span className='text-sm font-semibold leading-6'>
                     GitHub
                   </span>
-                </a>
+                </button>
               </div>
             </div>
           </div>
 
           <p className='mt-10 text-center text-sm text-gray-500'>
             Don't have an account?{' '}
-            <a
+            <Link
               href='/register'
               className='font-semibold leading-6 text-indigo-600 hover:text-indigo-500'
             >
               Register for free!
-            </a>
+            </Link>
           </p>
         </div>
       </div>

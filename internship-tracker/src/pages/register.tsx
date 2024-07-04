@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { auth, db } from '../../firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
+import Link from 'next/link';
 
 export default function Register() {
   const [firstName, setFirstName] = useState('');
@@ -244,10 +245,7 @@ export default function Register() {
               </div>
 
               <div className='mt-6 grid grid-cols-2 gap-4'>
-                <a
-                  href='#'
-                  className='flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:ring-transparent'
-                >
+                <button className='flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:ring-transparent'>
                   <svg
                     className='h-5 w-5'
                     aria-hidden='true'
@@ -273,12 +271,9 @@ export default function Register() {
                   <span className='text-sm font-semibold leading-6'>
                     Google
                   </span>
-                </a>
+                </button>
 
-                <a
-                  href='#'
-                  className='flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:ring-transparent'
-                >
+                <button className='flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:ring-transparent'>
                   <svg
                     className='h-5 w-5 fill-[#24292F]'
                     aria-hidden='true'
@@ -294,19 +289,19 @@ export default function Register() {
                   <span className='text-sm font-semibold leading-6'>
                     GitHub
                   </span>
-                </a>
+                </button>
               </div>
             </div>
           </div>
 
           <p className='mt-10 text-center text-sm text-gray-500'>
             Already have an account?{' '}
-            <a
+            <Link
               href='/login'
               className='font-semibold leading-6 text-indigo-600 hover:text-indigo-500'
             >
               Sign in
-            </a>
+            </Link>
           </p>
         </div>
       </div>

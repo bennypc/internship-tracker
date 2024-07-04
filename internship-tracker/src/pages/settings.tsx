@@ -1,6 +1,5 @@
 import { Fragment, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-
 import {
   Dialog,
   DialogPanel,
@@ -54,14 +53,14 @@ const secondaryNavigation = [
   { name: 'Privacy', href: '#', current: false }
 ];
 
-function classNames(...classes) {
+function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
 export default function Settings() {
   const { user, loading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -106,13 +105,15 @@ export default function Settings() {
     }
   }, [user]);
 
-  const handleChange = (e) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setProfileData({ ...profileData, [name]: value });
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
     if (
       file &&
       file.size <= 8 * 1024 * 1024 &&
@@ -125,10 +126,14 @@ export default function Settings() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       let downloadURL = profileData.photoURL;
+
+      if (!user) {
+        throw new Error('User is not authenticated');
+      }
 
       // Check if there is a new profile picture to upload
       if (selectedFile) {
@@ -193,7 +198,7 @@ export default function Settings() {
 
   if (loading) return <div>Loading...</div>;
 
-  const handleChangePassword = async (e) => {
+  const handleChangePassword = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
       alert('New passwords do not match');
@@ -201,6 +206,9 @@ export default function Settings() {
     }
     try {
       const user = auth.currentUser;
+      if (!user || !user.email) {
+        throw new Error('User is not authenticated or email is not available');
+      }
       const credential = EmailAuthProvider.credential(
         user.email,
         currentPassword
@@ -218,10 +226,15 @@ export default function Settings() {
     }
   };
 
-  const handleLogoutOtherSessions = async (e) => {
+  const handleLogoutOtherSessions = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     try {
       const user = auth.currentUser;
+      if (!user || !user.email) {
+        throw new Error('User is not authenticated or email is not available');
+      }
       const credential = EmailAuthProvider.credential(
         user.email,
         logoutPassword
