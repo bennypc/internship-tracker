@@ -40,8 +40,13 @@ const navigation = [
   { name: 'Dashboard', href: '/', icon: HomeIcon, current: false },
   { name: 'Profile', href: '#', icon: UserIcon, current: false },
   { name: 'Applications', href: '#', icon: FolderIcon, current: false },
-  { name: 'Calendar', href: '#', icon: CalendarIcon, current: false },
-  { name: 'Documents', href: '#', icon: DocumentDuplicateIcon, current: false },
+  { name: 'Calendar', href: '/calendar', icon: CalendarIcon, current: false },
+  {
+    name: 'Documents',
+    href: '/documents',
+    icon: DocumentDuplicateIcon,
+    current: false
+  },
   { name: 'Reports', href: '#', icon: ChartPieIcon, current: false },
   { name: 'Settings', href: '#', icon: Cog6ToothIcon, current: true }
 ];
@@ -61,6 +66,9 @@ export default function Settings() {
   const { user, loading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedBannerFile, setSelectedBannerFile] = useState<File | null>(
+    null
+  );
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -79,7 +87,8 @@ export default function Settings() {
     education: '',
     linkedin: '',
     website: '',
-    photoURL: ''
+    photoURL: '',
+    bannerURL: ''
   });
 
   useEffect(() => {
@@ -97,7 +106,8 @@ export default function Settings() {
             education: userDoc.data().profile.education,
             linkedin: userDoc.data().profile.linkedin,
             website: userDoc.data().profile.website,
-            photoURL: userDoc.data().profile.photoURL
+            photoURL: userDoc.data().profile.photoURL,
+            bannerURL: userDoc.data().profile.bannerURL || ''
           });
         }
       };
@@ -126,10 +136,25 @@ export default function Settings() {
     }
   };
 
+  const handleBannerFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+    if (
+      file &&
+      file.size <= 8 * 1024 * 1024 &&
+      file.type.startsWith('image/')
+    ) {
+      // Ensure file is <= 8MB and is an image
+      setSelectedBannerFile(file);
+    } else {
+      alert('File must be an image and less than 8MB');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       let downloadURL = profileData.photoURL;
+      let bannerDownloadURL = profileData.bannerURL;
 
       if (!user) {
         throw new Error('User is not authenticated');
@@ -171,6 +196,45 @@ export default function Settings() {
         });
       }
 
+      // Check if there is a new banner picture to upload
+      if (selectedBannerFile) {
+        // Create a reference to the old banner file in Firebase Storage
+        const oldBannerFileRef = ref(
+          storage,
+          `profileBanners/${user.uid}/banner.jpg`
+        );
+
+        // Delete the old banner picture if it exists
+        if (bannerDownloadURL) {
+          await deleteObject(oldBannerFileRef).catch((error) => {
+            console.log(
+              'Old banner picture does not exist or could not be deleted:',
+              error
+            );
+          });
+        }
+
+        // Create a reference to the new banner file in Firebase Storage
+        const newBannerFileRef = ref(
+          storage,
+          `profileBanners/${user.uid}/banner.jpg`
+        );
+
+        // Upload the new banner file
+        const snapshot = await uploadBytes(
+          newBannerFileRef,
+          selectedBannerFile
+        );
+
+        // Get the URL of the uploaded banner file
+        bannerDownloadURL = await getDownloadURL(snapshot.ref);
+
+        // Update the banner picture URL in Firestore
+        await updateDoc(doc(db, 'users', user.uid), {
+          'profile.bannerURL': bannerDownloadURL
+        });
+      }
+
       // Update the rest of the profile data
       const userProfileData = {
         profile: {
@@ -181,7 +245,8 @@ export default function Settings() {
           education: profileData.education,
           linkedin: profileData.linkedin,
           website: profileData.website,
-          photoURL: downloadURL // Ensure this is handled correctly
+          photoURL: downloadURL,
+          bannerURL: bannerDownloadURL
         },
         displayName: profileData.displayName,
         email: profileData.email,
@@ -457,6 +522,36 @@ export default function Settings() {
                             type='file'
                             accept='image/*'
                             onChange={handleFileChange}
+                            className='hidden'
+                          />
+                          <p className='mt-2 text-xs leading-5 text-gray-600'>
+                            JPG, GIF or PNG. 8MB max.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className='col-span-full flex items-center gap-x-8'>
+                        <img
+                          src={
+                            profileData.bannerURL ||
+                            'https://images.unsplash.com/photo-1444628838545-ac4016a5418a?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
+                          }
+                          alt=''
+                          className='h-24 w-24 flex-none rounded-lg bg-gray-800 object-cover'
+                        />
+                        <div>
+                          <label
+                            htmlFor='bannerPicture'
+                            className='rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 cursor-pointer'
+                          >
+                            Change banner
+                          </label>
+                          <input
+                            id='bannerPicture'
+                            name='bannerPicture'
+                            type='file'
+                            accept='image/*'
+                            onChange={handleBannerFileChange}
                             className='hidden'
                           />
                           <p className='mt-2 text-xs leading-5 text-gray-600'>

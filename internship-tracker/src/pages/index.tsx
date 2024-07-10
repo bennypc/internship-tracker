@@ -24,8 +24,13 @@ const navigation = [
   { name: 'Dashboard', href: '/', icon: HomeIcon, current: true },
   { name: 'Profile', href: '#', icon: UserIcon, current: false },
   { name: 'Applications', href: '#', icon: FolderIcon, current: false },
-  { name: 'Calendar', href: '#', icon: CalendarIcon, current: false },
-  { name: 'Documents', href: '#', icon: DocumentDuplicateIcon, current: false },
+  { name: 'Calendar', href: '/calendar', icon: CalendarIcon, current: false },
+  {
+    name: 'Documents',
+    href: '/documents',
+    icon: DocumentDuplicateIcon,
+    current: false
+  },
   { name: 'Reports', href: '#', icon: ChartPieIcon, current: false },
   { name: 'Settings', href: '/settings', icon: Cog6ToothIcon, current: false }
 ];
